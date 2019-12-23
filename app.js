@@ -1,15 +1,21 @@
 
 function buildChart(testID) {
 d3.json("data/samples.json").then(function(data){
-    var sample_values = data.samples[0].sample_values.slice(0, 10).reverse()
+
+
+    var sample_values = data.samples
     console.log(sample_values)
 
-    var otu_ids = data.samples[0].otu_ids.slice(0, 10).reverse()
+    var SubID = sample_values.filter(idNo => idNo.id == testID)
+    var results = SubID[0]
+
+    var otu_ids = results.otu_ids.slice(0, 10).reverse()
     console.log(otu_ids)
 
-    var otu_lables = data.samples[0].otu_labels.slice(0, 10).reverse()
+    var otu_lables = results.otu_labels.slice(0, 10).reverse()
     console.log(otu_lables)
 
+    var sample_values = results.sample_values;
 
     var lables = otu_ids.map(otuID => `OTU ${otuID} `)
     console.log(lables);
@@ -34,14 +40,17 @@ d3.json("data/samples.json").then(function(data){
             size: sample_values,
             color: otu_ids,
             colorscale: "Viridis"
-
         }
 
     };
+    
+    var layout = {
+        xaxis: {title: "OTU ID"},
+    }
 
     var data2 = [trace2]
 
-    Plotly.newPlot("bubble", data2);
+    Plotly.newPlot("bubble", data2, layout);
 
 });
 
@@ -50,11 +59,15 @@ d3.json("data/samples.json").then(function(data){
 
 function buildMetadat(testID) {
 d3.json("data/samples.json").then(function(data){
-    var metaData = data.metadata[0]
+    var metaData = data.metadata
     console.log(metaData)
+
+    var SubID = metaData.filter(idNo => idNo.id == testID)
+    var results = SubID[0]
+
     var data = d3.select("#sample-metadata")
     data.html("")
-    Object.entries(metaData).forEach(([key, value]) => {
+    Object.entries(results).forEach(([key, value]) => {
         data.append("h6").text(`${key}: ${value}`)
     });
 });
