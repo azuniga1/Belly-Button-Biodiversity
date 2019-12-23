@@ -1,4 +1,5 @@
 
+function buildChart(testID) {
 d3.json("data/samples.json").then(function(data){
     var sample_values = data.samples[0].sample_values.slice(0, 10).reverse()
     console.log(sample_values)
@@ -44,8 +45,10 @@ d3.json("data/samples.json").then(function(data){
 
 });
 
+};
 
 
+function buildMetadat(testID) {
 d3.json("data/samples.json").then(function(data){
     var metaData = data.metadata[0]
     console.log(metaData)
@@ -54,9 +57,34 @@ d3.json("data/samples.json").then(function(data){
     Object.entries(metaData).forEach(([key, value]) => {
         data.append("h6").text(`${key}: ${value}`)
     });
-})
+});
 
+}
 
+function init() {
+    var dropdownMenu = d3.select("#selDataset");
 
+    d3.json("data/samples.json").then(function(data) {
+        var testId = data.names;
+        console.log(testId);
+
+        testId.forEach((id) => {
+            dropdownMenu
+            .append("option").text(id).property("value", id)
+        });
+
+        var firstID = testId[0];
+        buildChart(firstID);
+        buildMetadat(firstID);
+    })
+}
+
+function optionChanged(newID) {
+    buildChart(newID)
+    buildMetadat(newID)
+
+}
+
+init();
 
 
